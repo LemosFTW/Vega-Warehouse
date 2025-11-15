@@ -74,4 +74,15 @@ public class Ingredient {
     public void setId(Long id) {
         this.id = id;
     }
+    @Override
+    public String toString() {
+        return "Ingredient{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", type=" + type +
+                ", quantity=" + quantity +
+                ", unit='" + unit + '\'' +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }

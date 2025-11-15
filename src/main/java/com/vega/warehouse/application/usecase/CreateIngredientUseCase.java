@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class CreateIngredientUseCase {
@@ -17,19 +18,14 @@ public class CreateIngredientUseCase {
         this.ingredientRepository = ingredientRepository;
     }
 
-    public Ingredient execute(String name,
-                              IngredientType type,
-                              BigDecimal quantity,
-                              String unit) {
+    public Ingredient execute(String name, IngredientType type, BigDecimal quantity, String unit) {
+        Ingredient ingredient = null;
+        Optional<Ingredient> hasIngredient = ingredientRepository.findbyName(name);
 
-        // aqui é um bom lugar para regras de negócio ligadas à criação
-        Ingredient ingredient = new Ingredient(
-                name,
-                type,
-                quantity,
-                unit,
-                LocalDateTime.now()
-        );
+        if (hasIngredient.isPresent())
+            ingredient = ingredientRepository.updateVolume(hasIngredient.get(), quantity);
+        else
+            ingredient = new Ingredient(name, type, quantity, unit, LocalDateTime.now());
 
         return ingredientRepository.save(ingredient);
     }

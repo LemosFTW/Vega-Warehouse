@@ -7,6 +7,7 @@ import com.vega.warehouse.infrastructure.persistence.mapper.IngredientEntityMapp
 import com.vega.warehouse.infrastructure.persistence.springdata.IngredientSpringDataRepository;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,5 +39,17 @@ public class IngredientRepositoryAdapter implements IngredientRepositoryPort {
                 .stream()
                 .map(IngredientEntityMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Ingredient updateVolume(Ingredient ingredient, BigDecimal newVolume) {
+        ingredient.setQuantity(ingredient.getQuantity().add(newVolume));
+        return ingredient;
+    }
+
+    @Override
+    public Optional<Ingredient> findbyName(String name) {
+        return springDataRepository.findByName(name)
+                .map(IngredientEntityMapper::toDomain);
     }
 }
