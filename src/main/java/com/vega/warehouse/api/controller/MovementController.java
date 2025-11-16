@@ -1,34 +1,41 @@
 package com.vega.warehouse.api.controller;
 
-
+import com.vega.warehouse.application.dto.CreateMovementRequest;
 import com.vega.warehouse.application.dto.MovementLogResponse;
+import com.vega.warehouse.api.dto.response.ApiResponse;
 import com.vega.warehouse.api.mapper.MovementApiMapper;
+import com.vega.warehouse.application.usecase.CreateMovementUseCase;
 import com.vega.warehouse.application.usecase.ListMovementsUseCase;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.vega.warehouse.domain.model.Movement;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
-@RequestMapping("/historico")
+@RequestMapping("/movements")
 public class MovementController {
 
-    private final ListMovementsUseCase listMovementsUseCase;
+    private final CreateMovementUseCase createMovementUseCase;
 
-    public MovementController(ListMovementsUseCase listMovementsUseCase) {
-        this.listMovementsUseCase = listMovementsUseCase;
+    public MovementController(CreateMovementUseCase createMovementUseCase) {
+        this.createMovementUseCase = createMovementUseCase;
     }
 
-    @GetMapping
-    public List<MovementLogResponse> list(
-            @RequestParam(name = "sortBy", required = false, defaultValue = "date") String sortBy,
-            @RequestParam(name = "order", required = false, defaultValue = "desc") String order
-    ) {
-        return listMovementsUseCase.execute(sortBy, order)
-                .stream()
-                .map(MovementApiMapper::toResponse)
-                .toList();
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponse<MovementLogResponse> create(@Valid @RequestBody CreateMovementRequest request) {
+        Movement movement = createMovementUseCase.execute(
+                request.getType(),
+                request.getIngredientId(),
+                request.getCompartmentCode(),
+                request.getQuantity(),
+                request.getResponsible()
+        );
+
+        return new ApiResponse<>(
+                "Movement created successfully",
+                MovementApiMapper.toResponse(movement)
+        );
     }
 }

@@ -8,5 +8,7 @@ import java.util.List;
 
 public interface MovementRepositoryPort {
 
+    Movement save(Movement movement);
+
     List<Movement> findAllSorted(MovementSortBy sortBy, SortDirection direction);
 }

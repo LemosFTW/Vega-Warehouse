@@ -1,5 +1,6 @@
 package com.vega.warehouse.infrastructure.persistence.entity;
 
+import com.vega.warehouse.domain.enums.IngredientType;
 import com.vega.warehouse.domain.enums.MovementType;
 import jakarta.persistence.*;
 
@@ -32,6 +33,13 @@ public class MovementEntity {
     @Column(nullable = false)
     private LocalDateTime movementDateTime;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private IngredientType ingredientType;
+
+    @Column(nullable = false)
+    private String responsible;
+
     protected MovementEntity() {
     }
 
@@ -39,11 +47,15 @@ public class MovementEntity {
                           IngredientEntity ingredient,
                           CompartmentEntity compartment,
                           BigDecimal quantity,
+                          String responsible,
+                          IngredientType ingredientType,
                           LocalDateTime movementDateTime) {
         this.type = type;
         this.ingredient = ingredient;
         this.compartment = compartment;
         this.quantity = quantity;
+        this.responsible = responsible;
+        this.ingredientType = ingredientType;
         this.movementDateTime = movementDateTime;
     }
 
@@ -89,5 +101,25 @@ public class MovementEntity {
 
     public void setMovementDateTime(LocalDateTime movementDateTime) {
         this.movementDateTime = movementDateTime;
+    }
+
+    public String getResponsible() {
+        return responsible;
+    }
+
+    public void setResponsible(String responsible) {
+        this.responsible = responsible;
+    }
+
+    public MovementType getMovementType() {
+        return this.type;
+    }
+
+    public IngredientType getIngredientType() {
+        return this.ingredientType;
+    }
+
+    public void setIngredientType(IngredientType ingredientType) {
+        this.ingredientType = ingredientType;
     }
 }

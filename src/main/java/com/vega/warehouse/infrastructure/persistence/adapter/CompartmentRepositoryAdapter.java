@@ -59,5 +59,18 @@ public class CompartmentRepositoryAdapter implements CompartmentRepositoryPort {
                 })
                 .toList();
     }
+
+    /**
+     * @param type
+     * @return
+     */
+    @Override
+    public List<Compartment> findAvailableForSaleByType(IngredientType type) {
+        return springDataRepository
+                .findByTypeAndCurrentQuantityGreaterThan(type, BigDecimal.ZERO)
+                .stream()
+                .map(CompartmentEntityMapper::toDomain)
+                .toList();
+    }
 }
 

@@ -19,5 +19,6 @@ public interface CompartmentRepositoryPort {
 
     List<Compartment> findAvailableForStorage(IngredientType type, BigDecimal quantity);
 
+    List<Compartment> findAvailableForSaleByType(IngredientType type);
 }
 
