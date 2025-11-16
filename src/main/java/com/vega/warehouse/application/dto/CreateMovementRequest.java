@@ -44,4 +44,24 @@ public class CreateMovementRequest {
     public String getResponsible() {
         return responsible;
     }
+
+    public void setType(MovementType type) {
+        this.type = type;
+    }
+
+    public void setIngredientId(Long ingredientId) {
+        this.ingredientId = ingredientId;
+    }
+
+    public void setCompartmentCode(String compartmentCode) {
+        this.compartmentCode = compartmentCode;
+    }
+
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setResponsible(String responsible) {
+        this.responsible = responsible;
+    }
 }
