@@ -1,6 +1,7 @@
 package com.vega.warehouse.infrastructure.persistence.adapter;
 
 import com.vega.warehouse.domain.model.Ingredient;
+import com.vega.warehouse.domain.model.IngredientVolumeByType;
 import com.vega.warehouse.domain.repository.IngredientRepositoryPort;
 import com.vega.warehouse.infrastructure.persistence.entity.IngredientEntity;
 import com.vega.warehouse.infrastructure.persistence.mapper.IngredientEntityMapper;
@@ -51,5 +52,16 @@ public class IngredientRepositoryAdapter implements IngredientRepositoryPort {
     public Optional<Ingredient> findbyName(String name) {
         return springDataRepository.findByName(name)
                 .map(IngredientEntityMapper::toDomain);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public List<IngredientVolumeByType> getTotalVolumeByType() {
+        return springDataRepository.getTotalVolumeByType()
+                .stream()
+                .map(p -> new IngredientVolumeByType(p.getType(), p.getTotalQuantity()))
+                .toList();
     }
 }

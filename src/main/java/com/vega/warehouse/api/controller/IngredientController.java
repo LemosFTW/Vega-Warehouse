@@ -3,7 +3,9 @@ package com.vega.warehouse.api.controller;
 import com.vega.warehouse.api.dto.request.CreateIngredientRequest;
 import com.vega.warehouse.api.dto.response.IngredientResponse;
 import com.vega.warehouse.api.mapper.IngredientApiMapper;
+import com.vega.warehouse.application.dto.IngredientVolumeByTypeResponse;
 import com.vega.warehouse.application.usecase.CreateIngredientUseCase;
+import com.vega.warehouse.application.usecase.GetTotalVolumeByIngredientTypeUseCase;
 import com.vega.warehouse.application.usecase.ListIngredientsUseCase;
 import com.vega.warehouse.domain.model.Ingredient;
 import com.vega.warehouse.api.dto.response.ApiResponse;
@@ -19,11 +21,14 @@ public class IngredientController {
 
     private final CreateIngredientUseCase createIngredientUseCase;
     private final ListIngredientsUseCase listIngredientsUseCase;
+    private final GetTotalVolumeByIngredientTypeUseCase getTotalVolumeByIngredientTypeUseCase;
 
     public IngredientController(CreateIngredientUseCase createIngredientUseCase,
-                                ListIngredientsUseCase listIngredientsUseCase) {
+                                ListIngredientsUseCase listIngredientsUseCase,
+                                GetTotalVolumeByIngredientTypeUseCase getTotalVolumeByIngredientTypeUseCase) {
         this.createIngredientUseCase = createIngredientUseCase;
         this.listIngredientsUseCase = listIngredientsUseCase;
+        this.getTotalVolumeByIngredientTypeUseCase = getTotalVolumeByIngredientTypeUseCase;
     }
 
     @PostMapping
@@ -44,6 +49,14 @@ public class IngredientController {
     @GetMapping
     public List<IngredientResponse> list() {
         return listIngredientsUseCase.execute()
+                .stream()
+                .map(IngredientApiMapper::toResponse)
+                .toList();
+    }
+
+    @GetMapping("/volume")
+    public List<IngredientVolumeByTypeResponse> getTotalVolumeByType() {
+        return getTotalVolumeByIngredientTypeUseCase.execute()
                 .stream()
                 .map(IngredientApiMapper::toResponse)
                 .toList();

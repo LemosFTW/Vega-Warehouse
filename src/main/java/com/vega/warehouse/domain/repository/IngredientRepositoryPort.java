@@ -1,6 +1,7 @@
 package com.vega.warehouse.domain.repository;
 
 import com.vega.warehouse.domain.model.Ingredient;
+import com.vega.warehouse.domain.model.IngredientVolumeByType;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,4 +18,7 @@ public interface IngredientRepositoryPort {
     Ingredient updateVolume(Ingredient ingredient, BigDecimal quantity);
 
     Optional<Ingredient> findbyName(String name);
+
+    List<IngredientVolumeByType> getTotalVolumeByType();
+
 }
