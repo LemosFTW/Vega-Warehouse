@@ -12,6 +12,15 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Adapter de repositório para ingredientes.
+ * <p>
+ * Implementa a porta de repositório do domínio utilizando
+ * Spring Data JPA, seguindo o padrão de Ports and Adapters.
+ * </p>
+ *
+ * @author LemosFTW
+ */
 @Component
 public class IngredientRepositoryAdapter implements IngredientRepositoryPort {
 
@@ -55,7 +64,9 @@ public class IngredientRepositoryAdapter implements IngredientRepositoryPort {
     }
 
     /**
-     * @return
+     * Retorna o volume total de ingredientes agrupado por tipo.
+     *
+     * @return lista com o volume total de cada tipo de ingrediente
      */
     @Override
     public List<IngredientVolumeByType> getTotalVolumeByType() {

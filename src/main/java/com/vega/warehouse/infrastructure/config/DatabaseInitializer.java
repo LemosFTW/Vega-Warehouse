@@ -11,9 +11,34 @@ import org.springframework.context.annotation.Configuration;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Configuração para inicialização do banco de dados.
+ * <p>
+ * Cria compartimentos iniciais se o banco estiver vazio,
+ * utilizando as capacidades máximas definidas no CapacityService.
+ * </p>
+ *
+ * @author LemosFTW
+ */
 @Configuration
 public class DatabaseInitializer {
 
+    /**
+     * Inicializa compartimentos padrão no banco de dados.
+     * <p>
+     * Cria 5 compartimentos iniciais com diferentes capacidades:
+     * <ul>
+     *   <li>C1: 600kg - pode armazenar SECO, LIQUIDO ou REFRIGERADO</li>
+     *   <li>C2: 500L - pode armazenar LIQUIDO ou REFRIGERADO</li>
+     *   <li>C3: 400kg - pode armazenar apenas REFRIGERADO</li>
+     *   <li>C4: 600kg - vazio, pode armazenar qualquer tipo</li>
+     *   <li>C5: 500L - parcialmente ocupado com LIQUIDO (200L)</li>
+     * </ul>
+     * </p>
+     *
+     * @param repository repositório de compartimentos
+     * @return CommandLineRunner que executa a inicialização
+     */
     @Bean
     public CommandLineRunner initCompartments(CompartmentSpringDataRepository repository) {
         return args -> {
