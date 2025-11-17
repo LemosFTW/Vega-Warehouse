@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/ingredients")
+@RequestMapping("/ingredientes")
 public class IngredientController {
 
     private final CreateIngredientUseCase createIngredientUseCase;

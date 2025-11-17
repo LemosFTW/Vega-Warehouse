@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/movements")
+@RequestMapping("/movimentos")
 public class MovementController {
 
     private final CreateMovementUseCase createMovementUseCase;
