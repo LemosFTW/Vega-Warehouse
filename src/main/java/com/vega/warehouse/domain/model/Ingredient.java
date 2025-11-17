@@ -5,15 +5,46 @@ import com.vega.warehouse.domain.enums.IngredientType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Representa um ingrediente no sistema de armazém.
+ * <p>
+ * Um ingrediente possui nome, tipo, quantidade, unidade de medida
+ * e data de criação. A quantidade pode ser atualizada conforme
+ * as movimentações do estoque.
+ * </p>
+ *
+ * @author LemosFTW
+ */
 public class Ingredient {
 
+    /** Identificador único do ingrediente */
     private Long id;
+    
+    /** Nome do ingrediente */
     private String name;
+    
+    /** Tipo do ingrediente (SECO, LIQUIDO, REFRIGERADO) */
     private IngredientType type;
+    
+    /** Quantidade disponível do ingrediente */
     private BigDecimal quantity;
+    
+    /** Unidade de medida (ex: kg, litros, unidades) */
     private String unit;
+    
+    /** Data e hora de criação do registro */
     private LocalDateTime createdAt;
 
+    /**
+     * Construtor completo do ingrediente.
+     *
+     * @param id identificador único
+     * @param name nome do ingrediente
+     * @param type tipo do ingrediente
+     * @param quantity quantidade disponível
+     * @param unit unidade de medida
+     * @param createdAt data e hora de criação
+     */
     public Ingredient(Long id,
                       String name,
                       IngredientType type,
@@ -28,6 +59,15 @@ public class Ingredient {
         this.createdAt = createdAt;
     }
 
+    /**
+     * Construtor para criação de novo ingrediente (sem ID).
+     *
+     * @param name nome do ingrediente
+     * @param type tipo do ingrediente
+     * @param quantity quantidade disponível
+     * @param unit unidade de medida
+     * @param createdAt data e hora de criação
+     */
     public Ingredient(String name,
                       IngredientType type,
                       BigDecimal quantity,
@@ -67,6 +107,11 @@ public class Ingredient {
         return createdAt;
     }
 
+    /**
+     * Atualiza a quantidade do ingrediente.
+     *
+     * @param newQuantity nova quantidade a ser definida
+     */
     public void updateQuantity(BigDecimal newQuantity) {
         this.quantity = newQuantity;
     }

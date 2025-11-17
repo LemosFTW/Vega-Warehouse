@@ -15,6 +15,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller REST para operações relacionadas a ingredientes.
+ * <p>
+ * Expõe endpoints para criação, listagem e consulta de volumes
+ * de ingredientes no armazém.
+ * </p>
+ *
+ * @author LemosFTW
+ */
 @RestController
 @RequestMapping("/ingredientes")
 public class IngredientController {
@@ -23,6 +32,13 @@ public class IngredientController {
     private final ListIngredientsUseCase listIngredientsUseCase;
     private final GetTotalVolumeByIngredientTypeUseCase getTotalVolumeByIngredientTypeUseCase;
 
+    /**
+     * Construtor do controller.
+     *
+     * @param createIngredientUseCase caso de uso para criação de ingredientes
+     * @param listIngredientsUseCase caso de uso para listagem de ingredientes
+     * @param getTotalVolumeByIngredientTypeUseCase caso de uso para volume por tipo
+     */
     public IngredientController(CreateIngredientUseCase createIngredientUseCase,
                                 ListIngredientsUseCase listIngredientsUseCase,
                                 GetTotalVolumeByIngredientTypeUseCase getTotalVolumeByIngredientTypeUseCase) {
@@ -31,6 +47,12 @@ public class IngredientController {
         this.getTotalVolumeByIngredientTypeUseCase = getTotalVolumeByIngredientTypeUseCase;
     }
 
+    /**
+     * Cria um novo ingrediente ou atualiza a quantidade se já existir.
+     *
+     * @param request dados do ingrediente a ser criado
+     * @return resposta com o ingrediente criado
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<IngredientResponse> create(@Valid @RequestBody CreateIngredientRequest request) {
@@ -46,6 +68,11 @@ public class IngredientController {
         );
     }
 
+    /**
+     * Lista todos os ingredientes cadastrados.
+     *
+     * @return lista de ingredientes
+     */
     @GetMapping
     public List<IngredientResponse> list() {
         return listIngredientsUseCase.execute()
@@ -54,6 +81,11 @@ public class IngredientController {
                 .toList();
     }
 
+    /**
+     * Retorna o volume total de ingredientes agrupado por tipo.
+     *
+     * @return lista com o volume total de cada tipo de ingrediente
+     */
     @GetMapping("/volume")
     public List<IngredientVolumeByTypeResponse> getTotalVolumeByType() {
         return getTotalVolumeByIngredientTypeUseCase.execute()

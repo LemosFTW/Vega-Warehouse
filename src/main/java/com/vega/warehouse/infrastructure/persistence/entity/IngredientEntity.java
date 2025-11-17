@@ -8,6 +8,15 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Entidade JPA que representa um ingrediente no banco de dados.
+ * <p>
+ * Mapeia a tabela "ingredient" e corresponde ao modelo de domínio
+ * {@link com.vega.warehouse.domain.model.Ingredient}.
+ * </p>
+ *
+ * @author LemosFTW
+ */
 @Entity
 @Table(name = "ingredient")
 public class IngredientEntity {

@@ -12,15 +12,32 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Handler global de exceções da aplicação.
+ * <p>
+ * Centraliza o tratamento de exceções e converte para respostas HTTP
+ * padronizadas com mensagens de erro apropriadas.
+ * </p>
+ *
+ * @author LemosFTW
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Trata exceções de violação de constraints de validação.
+     *
+     * @param ex exceção de violação de constraint
+     * @param request requisição HTTP
+     * @return resposta de erro com detalhes das violações
+     */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolationException(
             ConstraintViolationException ex,
@@ -51,6 +68,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    /**
+     * Trata exceções de parâmetros obrigatórios ausentes na requisição.
+     *
+     * @param ex exceção de parâmetro ausente
+     * @param request requisição HTTP
+     * @return resposta de erro indicando o parâmetro ausente
+     */
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(
             MissingServletRequestParameterException ex,
@@ -69,6 +93,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    /**
+     * Trata exceções de tipo de parâmetro inválido.
+     *
+     * @param ex exceção de tipo inválido
+     * @param request requisição HTTP
+     * @return resposta de erro indicando o tipo esperado
+     */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
             MethodArgumentTypeMismatchException ex,
@@ -96,6 +127,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    /**
+     * Trata exceções de argumentos de método inválidos (validação de bean).
+     *
+     * @param ex exceção de argumento inválido
+     * @param request requisição HTTP
+     * @return resposta de erro com detalhes dos campos inválidos
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex,
@@ -124,6 +162,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    /**
+     * Trata exceções de corpo de requisição malformado ou inválido.
+     *
+     * @param ex exceção de mensagem não legível
+     * @param request requisição HTTP
+     * @return resposta de erro indicando problema no corpo da requisição
+     */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException ex,
@@ -140,6 +185,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    /**
+     * Trata exceções de argumento ilegal (regras de negócio).
+     *
+     * @param ex exceção de argumento ilegal
+     * @param request requisição HTTP
+     * @return resposta de erro com a mensagem da exceção
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
             IllegalArgumentException ex,
@@ -156,6 +208,36 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    /**
+     * Trata exceções de rota não encontrada (404).
+     *
+     * @param ex exceção de handler não encontrado
+     * @param request requisição HTTP
+     * @return resposta de erro 404
+     */
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(
+            NoHandlerFoundException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Recurso Não Encontrado",
+                String.format("O endpoint '%s %s' não foi encontrado", ex.getHttpMethod(), ex.getRequestURL()),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    /**
+     * Trata exceções genéricas não tratadas anteriormente.
+     *
+     * @param ex exceção genérica
+     * @param request requisição HTTP
+     * @return resposta de erro interno do servidor
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(
             Exception ex,
@@ -172,6 +254,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
+    /**
+     * Extrai o nome do campo de uma violação de constraint.
+     *
+     * @param violation violação de constraint
+     * @return nome do campo
+     */
     private String getFieldName(ConstraintViolation<?> violation) {
         String propertyPath = violation.getPropertyPath().toString();
         if (propertyPath.contains(".")) {

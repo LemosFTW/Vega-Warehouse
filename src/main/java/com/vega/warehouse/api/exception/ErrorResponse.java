@@ -3,6 +3,15 @@ package com.vega.warehouse.api.exception;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Classe que representa uma resposta de erro padronizada da API.
+ * <p>
+ * Utilizada pelo GlobalExceptionHandler para formatar
+ * respostas de erro HTTP de forma consistente.
+ * </p>
+ *
+ * @author LemosFTW
+ */
 public class ErrorResponse {
 
     private LocalDateTime timestamp;
@@ -12,6 +21,15 @@ public class ErrorResponse {
     private String path;
     private List<FieldError> fieldErrors;
 
+    /**
+     * Construtor para resposta de erro sem detalhes de campos.
+     *
+     * @param timestamp data e hora do erro
+     * @param status código HTTP de status
+     * @param error tipo do erro
+     * @param message mensagem de erro
+     * @param path caminho da requisição que causou o erro
+     */
     public ErrorResponse(LocalDateTime timestamp, int status, String error, String message, String path) {
         this.timestamp = timestamp;
         this.status = status;
@@ -20,6 +38,16 @@ public class ErrorResponse {
         this.path = path;
     }
 
+    /**
+     * Construtor para resposta de erro com detalhes de campos.
+     *
+     * @param timestamp data e hora do erro
+     * @param status código HTTP de status
+     * @param error tipo do erro
+     * @param message mensagem de erro
+     * @param path caminho da requisição que causou o erro
+     * @param fieldErrors lista de erros de validação por campo
+     */
     public ErrorResponse(LocalDateTime timestamp, int status, String error, String message, String path, List<FieldError> fieldErrors) {
         this.timestamp = timestamp;
         this.status = status;
@@ -53,6 +81,11 @@ public class ErrorResponse {
         return fieldErrors;
     }
 
+    /**
+     * Classe interna que representa um erro de validação em um campo específico.
+     *
+     * @author LemosFTW
+     */
     public static class FieldError {
         private String field;
         private String message;
