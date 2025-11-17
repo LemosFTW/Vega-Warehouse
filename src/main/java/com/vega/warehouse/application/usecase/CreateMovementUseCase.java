@@ -102,6 +102,7 @@ public class CreateMovementUseCase {
                 LocalDateTime.now()
         );
 
+        ingredientRepository.save(ingredient);
         return movementRepository.save(movement);
     }
 
@@ -120,6 +121,10 @@ public class CreateMovementUseCase {
     private void handleEntrada(Ingredient ingredient,
                                Compartment compartment,
                                BigDecimal quantity) {
+        //Não se pode movimentar uma quantidade que não se tem.
+        if(quantity.compareTo(ingredient.getQuantity()) > 0) {
+            throw new IllegalArgumentException("Quantity moved must be lower or equal to the ingredients quantity.");
+        }
 
         if (compartment.getType() == null) {
             compartment.setType(ingredient.getType());
@@ -153,6 +158,7 @@ public class CreateMovementUseCase {
         }
 
         compartment.setCurrentQuantity(newQuantity);
+        ingredient.setQuantity(ingredient.getQuantity().subtract(newQuantity));
     }
 
     /**
@@ -187,5 +193,6 @@ public class CreateMovementUseCase {
 
         BigDecimal newQuantity = compartment.getCurrentQuantity().subtract(quantity);
         compartment.setCurrentQuantity(newQuantity);
+        ingredient.setQuantity(ingredient.getQuantity().add(quantity));
     }
 }

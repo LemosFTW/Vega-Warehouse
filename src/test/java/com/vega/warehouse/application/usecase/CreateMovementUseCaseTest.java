@@ -62,6 +62,7 @@ class CreateMovementUseCaseTest {
         MovementType movementType = MovementType.ENTRADA;
         BigDecimal quantity = new BigDecimal("100");
         String responsible = "João Silva";
+        BigDecimal initialIngredientQuantity = ingredient.getQuantity();
 
         when(ingredientRepository.findById(1L)).thenReturn(Optional.of(ingredient));
         when(compartmentRepository.findByCode("C1")).thenReturn(Optional.of(compartment));
@@ -93,6 +94,13 @@ class CreateMovementUseCaseTest {
         assertEquals(new BigDecimal("100"), savedCompartment.getCurrentQuantity());
         assertEquals(new BigDecimal("600"), savedCompartment.getMaxCapacity());
         assertEquals(LocalDate.now(), savedCompartment.getLastTypeChangeDate());
+
+        // Verificar que a quantidade do ingrediente foi decrementada
+        ArgumentCaptor<Ingredient> ingredientCaptor = ArgumentCaptor.forClass(Ingredient.class);
+        verify(ingredientRepository).save(ingredientCaptor.capture());
+        Ingredient savedIngredient = ingredientCaptor.getValue();
+        BigDecimal expectedQuantity = initialIngredientQuantity.subtract(savedCompartment.getCurrentQuantity());
+        assertEquals(expectedQuantity, savedIngredient.getQuantity());
     }
 
     @Test
@@ -105,6 +113,7 @@ class CreateMovementUseCaseTest {
         MovementType movementType = MovementType.ENTRADA;
         BigDecimal quantity = new BigDecimal("100");
         String responsible = "Maria Santos";
+        BigDecimal initialIngredientQuantity = ingredient.getQuantity();
 
         when(ingredientRepository.findById(1L)).thenReturn(Optional.of(ingredient));
         when(compartmentRepository.findByCode("C1")).thenReturn(Optional.of(occupiedCompartment));
@@ -126,6 +135,13 @@ class CreateMovementUseCaseTest {
         verify(compartmentRepository).save(compartmentCaptor.capture());
         Compartment savedCompartment = compartmentCaptor.getValue();
         assertEquals(new BigDecimal("300"), savedCompartment.getCurrentQuantity());
+
+        // Verificar que a quantidade do ingrediente foi decrementada
+        ArgumentCaptor<Ingredient> ingredientCaptor = ArgumentCaptor.forClass(Ingredient.class);
+        verify(ingredientRepository).save(ingredientCaptor.capture());
+        Ingredient savedIngredient = ingredientCaptor.getValue();
+        BigDecimal expectedQuantity = initialIngredientQuantity.subtract(savedCompartment.getCurrentQuantity());
+        assertEquals(expectedQuantity, savedIngredient.getQuantity());
     }
 
     @Test
@@ -138,6 +154,7 @@ class CreateMovementUseCaseTest {
         MovementType movementType = MovementType.SAIDA;
         BigDecimal quantity = new BigDecimal("100");
         String responsible = "Pedro Oliveira";
+        BigDecimal initialIngredientQuantity = ingredient.getQuantity();
 
         when(ingredientRepository.findById(1L)).thenReturn(Optional.of(ingredient));
         when(compartmentRepository.findByCode("C1")).thenReturn(Optional.of(occupiedCompartment));
@@ -160,6 +177,13 @@ class CreateMovementUseCaseTest {
         verify(compartmentRepository).save(compartmentCaptor.capture());
         Compartment savedCompartment = compartmentCaptor.getValue();
         assertEquals(new BigDecimal("200"), savedCompartment.getCurrentQuantity());
+
+        // Verificar que a quantidade do ingrediente foi incrementada
+        ArgumentCaptor<Ingredient> ingredientCaptor = ArgumentCaptor.forClass(Ingredient.class);
+        verify(ingredientRepository).save(ingredientCaptor.capture());
+        Ingredient savedIngredient = ingredientCaptor.getValue();
+        BigDecimal expectedQuantity = initialIngredientQuantity.add(quantity);
+        assertEquals(expectedQuantity, savedIngredient.getQuantity());
     }
 
     @Test
@@ -301,6 +325,7 @@ class CreateMovementUseCaseTest {
         
         BigDecimal quantity = new BigDecimal("100");
         String responsible = "Ana Costa";
+        BigDecimal initialIngredientQuantity = ingredient.getQuantity();
 
         when(ingredientRepository.findById(1L)).thenReturn(Optional.of(ingredient));
         when(compartmentRepository.findByCode("C1")).thenReturn(Optional.of(changedTypeCompartment));
@@ -322,6 +347,119 @@ class CreateMovementUseCaseTest {
         Compartment savedCompartment = compartmentCaptor.getValue();
         assertEquals(IngredientType.SECO, savedCompartment.getType());
         assertEquals(new BigDecimal("600"), savedCompartment.getMaxCapacity());
+
+        // Verificar que a quantidade do ingrediente foi decrementada
+        ArgumentCaptor<Ingredient> ingredientCaptor = ArgumentCaptor.forClass(Ingredient.class);
+        verify(ingredientRepository).save(ingredientCaptor.capture());
+        Ingredient savedIngredient = ingredientCaptor.getValue();
+        BigDecimal expectedQuantity = initialIngredientQuantity.subtract(savedCompartment.getCurrentQuantity());
+        assertEquals(expectedQuantity, savedIngredient.getQuantity());
+    }
+
+    @Test
+    @DisplayName("Deve decrementar quantidade do ingrediente em movimento de ENTRADA")
+    void testExecute_Entrada_ShouldDecrementIngredientQuantity() {
+        // Given
+        BigDecimal initialIngredientQuantity = new BigDecimal("500");
+        Ingredient testIngredient = new Ingredient(1L, "Açúcar", IngredientType.SECO, 
+                initialIngredientQuantity, "kg", LocalDateTime.now());
+        
+        Compartment emptyCompartment = new Compartment(1L, "C1", null, 
+                BigDecimal.ZERO, BigDecimal.ZERO, null);
+        
+        BigDecimal movementQuantity = new BigDecimal("150");
+        String responsible = "Test User";
+
+        when(ingredientRepository.findById(1L)).thenReturn(Optional.of(testIngredient));
+        when(compartmentRepository.findByCode("C1")).thenReturn(Optional.of(emptyCompartment));
+        when(compartmentRepository.save(any(Compartment.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(movementRepository.save(any(Movement.class))).thenAnswer(invocation -> {
+            Movement m = invocation.getArgument(0);
+            return new Movement(1L, m.getType(), m.getIngredientName(), 
+                    m.getCompartmentCode(), m.getQuantity(), m.getIngredientType(), 
+                    m.getResponsible(), m.getMovementDateTime());
+        });
+
+        // When
+        useCase.execute(MovementType.ENTRADA, 1L, "C1", movementQuantity, responsible);
+
+        // Then
+        ArgumentCaptor<Ingredient> ingredientCaptor = ArgumentCaptor.forClass(Ingredient.class);
+        verify(ingredientRepository).save(ingredientCaptor.capture());
+        Ingredient savedIngredient = ingredientCaptor.getValue();
+        
+        // A quantidade do ingrediente deve ser decrementada pela quantidade total do compartimento após a entrada
+        ArgumentCaptor<Compartment> compartmentCaptor = ArgumentCaptor.forClass(Compartment.class);
+        verify(compartmentRepository).save(compartmentCaptor.capture());
+        Compartment savedCompartment = compartmentCaptor.getValue();
+        
+        BigDecimal expectedQuantity = initialIngredientQuantity.subtract(savedCompartment.getCurrentQuantity());
+        assertEquals(expectedQuantity, savedIngredient.getQuantity());
+        assertTrue(savedIngredient.getQuantity().compareTo(initialIngredientQuantity) < 0, 
+                "A quantidade do ingrediente deve ser menor após a entrada");
+    }
+
+    @Test
+    @DisplayName("Deve incrementar quantidade do ingrediente em movimento de SAIDA")
+    void testExecute_Saida_ShouldIncrementIngredientQuantity() {
+        // Given
+        BigDecimal initialIngredientQuantity = new BigDecimal("200");
+        Ingredient testIngredient = new Ingredient(1L, "Sal", IngredientType.SECO, 
+                initialIngredientQuantity, "kg", LocalDateTime.now());
+        
+        Compartment occupiedCompartment = new Compartment(1L, "C1", IngredientType.SECO, 
+                new BigDecimal("600"), new BigDecimal("250"), LocalDate.now());
+        
+        BigDecimal movementQuantity = new BigDecimal("80");
+        String responsible = "Test User";
+
+        when(ingredientRepository.findById(1L)).thenReturn(Optional.of(testIngredient));
+        when(compartmentRepository.findByCode("C1")).thenReturn(Optional.of(occupiedCompartment));
+        when(compartmentRepository.save(any(Compartment.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(movementRepository.save(any(Movement.class))).thenAnswer(invocation -> {
+            Movement m = invocation.getArgument(0);
+            return new Movement(1L, m.getType(), m.getIngredientName(), 
+                    m.getCompartmentCode(), m.getQuantity(), m.getIngredientType(), 
+                    m.getResponsible(), m.getMovementDateTime());
+        });
+
+        // When
+        useCase.execute(MovementType.SAIDA, 1L, "C1", movementQuantity, responsible);
+
+        // Then
+        ArgumentCaptor<Ingredient> ingredientCaptor = ArgumentCaptor.forClass(Ingredient.class);
+        verify(ingredientRepository).save(ingredientCaptor.capture());
+        Ingredient savedIngredient = ingredientCaptor.getValue();
+        
+        // A quantidade do ingrediente deve ser incrementada pela quantidade movimentada
+        BigDecimal expectedQuantity = initialIngredientQuantity.add(movementQuantity);
+        assertEquals(expectedQuantity, savedIngredient.getQuantity());
+        assertTrue(savedIngredient.getQuantity().compareTo(initialIngredientQuantity) > 0, 
+                "A quantidade do ingrediente deve ser maior após a saída");
+    }
+
+    @Test
+    @DisplayName("Deve validar que quantidade movimentada não excede quantidade do ingrediente em ENTRADA")
+    void testExecute_Entrada_ShouldThrowException_WhenQuantityExceedsIngredientQuantity() {
+        // Given
+        BigDecimal ingredientQuantity = new BigDecimal("50");
+        Ingredient testIngredient = new Ingredient(1L, "Farinha", IngredientType.SECO, 
+                ingredientQuantity, "kg", LocalDateTime.now());
+        
+        Compartment emptyCompartment = new Compartment(1L, "C1", null, 
+                BigDecimal.ZERO, BigDecimal.ZERO, null);
+        
+        BigDecimal movementQuantity = new BigDecimal("100"); // Maior que a quantidade do ingrediente
+
+        when(ingredientRepository.findById(1L)).thenReturn(Optional.of(testIngredient));
+        when(compartmentRepository.findByCode("C1")).thenReturn(Optional.of(emptyCompartment));
+
+        // When & Then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
+                () -> useCase.execute(MovementType.ENTRADA, 1L, "C1", movementQuantity, "Responsible"));
+        
+        assertEquals("Quantity moved must be lower or equal to the ingredients quantity.", exception.getMessage());
+        verify(ingredientRepository, never()).save(any(Ingredient.class));
     }
 }
 
