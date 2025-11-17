@@ -12,6 +12,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -205,6 +206,29 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    /**
+     * Trata exceções de rota não encontrada (404).
+     *
+     * @param ex exceção de handler não encontrado
+     * @param request requisição HTTP
+     * @return resposta de erro 404
+     */
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(
+            NoHandlerFoundException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Recurso Não Encontrado",
+                String.format("O endpoint '%s %s' não foi encontrado", ex.getHttpMethod(), ex.getRequestURL()),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     /**
