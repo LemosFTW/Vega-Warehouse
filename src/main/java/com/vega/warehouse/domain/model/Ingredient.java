@@ -35,6 +35,7 @@ public class Ingredient {
     /** Data e hora de criação do registro */
     private LocalDateTime createdAt;
 
+    private int price;
     /**
      * Construtor completo do ingrediente.
      *
@@ -50,13 +51,16 @@ public class Ingredient {
                       IngredientType type,
                       BigDecimal quantity,
                       String unit,
-                      LocalDateTime createdAt) {
+                      LocalDateTime createdAt,
+                      int price
+    ) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.quantity = quantity;
         this.unit = unit;
         this.createdAt = createdAt;
+        this.price = price;
     }
 
     /**
@@ -72,8 +76,9 @@ public class Ingredient {
                       IngredientType type,
                       BigDecimal quantity,
                       String unit,
-                      LocalDateTime createdAt) {
-        this(null, name, type, quantity, unit, createdAt);
+                      LocalDateTime createdAt,
+                      int price) {
+        this(null, name, type, quantity, unit, createdAt, price);
     }
 
     public Long getId() {
@@ -107,6 +112,13 @@ public class Ingredient {
         return createdAt;
     }
 
+    public int getPrice() {
+        return price;
+    }
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
     /**
      * Atualiza a quantidade do ingrediente.
      *
@@ -128,6 +140,7 @@ public class Ingredient {
                 ", quantity=" + quantity +
                 ", unit='" + unit + '\'' +
                 ", createdAt=" + createdAt +
+                ", price=" + price +
                 '}';
     }
 }

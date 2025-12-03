@@ -15,7 +15,8 @@ public class IngredientEntityMapper {
                 ingredient.getType(),
                 ingredient.getQuantity(),
                 ingredient.getUnit(),
-                ingredient.getCreatedAt()
+                ingredient.getCreatedAt(),
+                ingredient.getPrice()
         );
 
         if (ingredient.getId() != null)
@@ -34,7 +35,8 @@ public class IngredientEntityMapper {
                 entity.getType(),
                 entity.getQuantity(),
                 entity.getUnit(),
-                entity.getCreatedAt()
+                entity.getCreatedAt(),
+                entity.getPrice()
         );
     }
 }

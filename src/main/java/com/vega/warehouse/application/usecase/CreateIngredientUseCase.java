@@ -45,14 +45,14 @@ public class CreateIngredientUseCase {
      * @param unit unidade de medida
      * @return ingrediente criado ou atualizado
      */
-    public Ingredient execute(String name, IngredientType type, BigDecimal quantity, String unit) {
+    public Ingredient execute(String name, IngredientType type, BigDecimal quantity, String unit, int price) {
         Ingredient ingredient = null;
         Optional<Ingredient> hasIngredient = ingredientRepository.findbyName(name);
 
         if (hasIngredient.isPresent())
             ingredient = ingredientRepository.updateVolume(hasIngredient.get(), quantity);
         else
-            ingredient = new Ingredient(name, type, quantity, unit, LocalDateTime.now());
+            ingredient = new Ingredient(name, type, quantity, unit, LocalDateTime.now(),price);
 
         return ingredientRepository.save(ingredient);
     }

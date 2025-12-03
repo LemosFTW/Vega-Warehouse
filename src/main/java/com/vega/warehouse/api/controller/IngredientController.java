@@ -56,12 +56,16 @@ public class IngredientController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<IngredientResponse> create(@Valid @RequestBody CreateIngredientRequest request) {
+        System.out.println(request.getPrice());
         Ingredient ingredient = createIngredientUseCase.execute(
                 request.getName(),
                 request.getType(),
                 request.getQuantity(),
-                request.getUnit()
+                request.getUnit(),
+                request.getPrice()
         );
+
+
         return new ApiResponse<>(
                 "Ingredient created successfully",
                 IngredientApiMapper.toResponse(ingredient)

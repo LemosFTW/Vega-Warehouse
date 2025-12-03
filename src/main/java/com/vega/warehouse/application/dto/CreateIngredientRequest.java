@@ -22,6 +22,10 @@ public class CreateIngredientRequest {
     @NotBlank
     private String unit;
 
+    @NotNull
+    @Min(0)
+    private int price;
+
     public String getName() {
         return name;
     }
@@ -52,5 +56,13 @@ public class CreateIngredientRequest {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public int getPrice() {
+        return price;
     }
 }

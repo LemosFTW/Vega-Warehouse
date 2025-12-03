@@ -40,6 +40,8 @@ public class IngredientEntity {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column()
+    private int price;
     protected IngredientEntity() {
     }
 
@@ -47,12 +49,14 @@ public class IngredientEntity {
                             IngredientType type,
                             BigDecimal quantity,
                             String unit,
-                            LocalDateTime createdAt) {
+                            LocalDateTime createdAt,
+                            int price) {
         this.name = name;
         this.type = type;
         this.quantity = quantity;
         this.unit = unit;
         this.createdAt = createdAt;
+        this.price = price;
     }
 
     public Long getId() {
@@ -100,5 +104,12 @@ public class IngredientEntity {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+    public int getPrice() {
+        return price;
     }
 }

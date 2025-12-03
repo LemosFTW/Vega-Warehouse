@@ -17,7 +17,8 @@ public class IngredientApiMapper {
                 ingredient.getType(),
                 ingredient.getQuantity(),
                 ingredient.getUnit(),
-                ingredient.getCreatedAt()
+                ingredient.getCreatedAt(),
+                ingredient.getPrice()
         );
     }
     public static IngredientVolumeByTypeResponse toResponse(IngredientVolumeByType volume) {

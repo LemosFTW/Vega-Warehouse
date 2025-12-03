@@ -14,19 +14,22 @@ public class IngredientResponse {
     private BigDecimal quantity;
     private String unit;
     private LocalDateTime createdAt;
+    private int price;
 
     public IngredientResponse(Long id,
                               String name,
                               IngredientType type,
                               BigDecimal quantity,
                               String unit,
-                              LocalDateTime createdAt) {
+                              LocalDateTime createdAt,
+                              int price) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.quantity = quantity;
         this.unit = unit;
         this.createdAt = createdAt;
+        this.price = price;
     }
 
     public Long getId() {
@@ -51,5 +54,13 @@ public class IngredientResponse {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 }
