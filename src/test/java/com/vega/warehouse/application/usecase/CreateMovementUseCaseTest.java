@@ -49,7 +49,7 @@ class CreateMovementUseCaseTest {
     @BeforeEach
     void setUp() {
         ingredient = new Ingredient(1L, "Farinha", IngredientType.SECO, 
-                new BigDecimal("100"), "kg", LocalDateTime.now());
+                new BigDecimal("100"), "kg", LocalDateTime.now(),0);
         
         compartment = new Compartment(1L, "C1", null, 
                 BigDecimal.ZERO, BigDecimal.ZERO, null);
@@ -362,7 +362,7 @@ class CreateMovementUseCaseTest {
         // Given
         BigDecimal initialIngredientQuantity = new BigDecimal("500");
         Ingredient testIngredient = new Ingredient(1L, "Açúcar", IngredientType.SECO, 
-                initialIngredientQuantity, "kg", LocalDateTime.now());
+                initialIngredientQuantity, "kg", LocalDateTime.now(),0);
         
         Compartment emptyCompartment = new Compartment(1L, "C1", null, 
                 BigDecimal.ZERO, BigDecimal.ZERO, null);
@@ -405,7 +405,7 @@ class CreateMovementUseCaseTest {
         // Given
         BigDecimal initialIngredientQuantity = new BigDecimal("200");
         Ingredient testIngredient = new Ingredient(1L, "Sal", IngredientType.SECO, 
-                initialIngredientQuantity, "kg", LocalDateTime.now());
+                initialIngredientQuantity, "kg", LocalDateTime.now(),0);
         
         Compartment occupiedCompartment = new Compartment(1L, "C1", IngredientType.SECO, 
                 new BigDecimal("600"), new BigDecimal("250"), LocalDate.now());
@@ -444,7 +444,7 @@ class CreateMovementUseCaseTest {
         // Given
         BigDecimal ingredientQuantity = new BigDecimal("50");
         Ingredient testIngredient = new Ingredient(1L, "Farinha", IngredientType.SECO, 
-                ingredientQuantity, "kg", LocalDateTime.now());
+                ingredientQuantity, "kg", LocalDateTime.now(),0);
         
         Compartment emptyCompartment = new Compartment(1L, "C1", null, 
                 BigDecimal.ZERO, BigDecimal.ZERO, null);

@@ -35,7 +35,7 @@ class CreateIngredientUseCaseTest {
     @BeforeEach
     void setUp() {
         existingIngredient = new Ingredient(1L, "Farinha", IngredientType.SECO, 
-                new BigDecimal("100"), "kg", LocalDateTime.now());
+                new BigDecimal("100"), "kg", LocalDateTime.now(),0);
     }
 
     @Test
@@ -46,16 +46,17 @@ class CreateIngredientUseCaseTest {
         IngredientType type = IngredientType.SECO;
         BigDecimal quantity = new BigDecimal("50");
         String unit = "kg";
+        int price = 0;
 
         when(ingredientRepository.findbyName(name)).thenReturn(Optional.empty());
         when(ingredientRepository.save(any(Ingredient.class))).thenAnswer(invocation -> {
             Ingredient ingredient = invocation.getArgument(0);
             return new Ingredient(1L, ingredient.getName(), ingredient.getType(), 
-                    ingredient.getQuantity(), ingredient.getUnit(), ingredient.getCreatedAt());
+                    ingredient.getQuantity(), ingredient.getUnit(), ingredient.getCreatedAt(),ingredient.getPrice());
         });
 
         // When
-        Ingredient result = useCase.execute(name, type, quantity, unit);
+        Ingredient result = useCase.execute(name, type, quantity, unit,price);
 
         // Then
         assertNotNull(result);
@@ -78,7 +79,7 @@ class CreateIngredientUseCaseTest {
         // Given
         String name = "Farinha";
         BigDecimal newQuantity = new BigDecimal("50");
-        BigDecimal expectedTotal = new BigDecimal("150"); // 100 + 50
+        BigDecimal expectedTotal = new BigDecimal("150");
 
         when(ingredientRepository.findbyName(name)).thenReturn(Optional.of(existingIngredient));
         when(ingredientRepository.updateVolume(eq(existingIngredient), eq(newQuantity)))
@@ -94,7 +95,7 @@ class CreateIngredientUseCaseTest {
         });
 
         // When
-        Ingredient result = useCase.execute(name, IngredientType.SECO, newQuantity, "kg");
+        Ingredient result = useCase.execute(name, IngredientType.SECO, newQuantity, "kg",0);
 
         // Then
         assertNotNull(result);
@@ -111,16 +112,17 @@ class CreateIngredientUseCaseTest {
         IngredientType type = IngredientType.LIQUIDO;
         BigDecimal quantity = new BigDecimal("200");
         String unit = "L";
+        int price = 0;
 
         when(ingredientRepository.findbyName(name)).thenReturn(Optional.empty());
         when(ingredientRepository.save(any(Ingredient.class))).thenAnswer(invocation -> {
             Ingredient ingredient = invocation.getArgument(0);
             return new Ingredient(1L, ingredient.getName(), ingredient.getType(), 
-                    ingredient.getQuantity(), ingredient.getUnit(), ingredient.getCreatedAt());
+                    ingredient.getQuantity(), ingredient.getUnit(), ingredient.getCreatedAt(), ingredient.getPrice());
         });
 
         // When
-        Ingredient result = useCase.execute(name, type, quantity, unit);
+        Ingredient result = useCase.execute(name, type, quantity, unit, price);
 
         // Then
         assertNotNull(result);
@@ -136,16 +138,17 @@ class CreateIngredientUseCaseTest {
         IngredientType type = IngredientType.REFRIGERADO;
         BigDecimal quantity = new BigDecimal("150");
         String unit = "kg";
+        int price = 0;
 
         when(ingredientRepository.findbyName(name)).thenReturn(Optional.empty());
         when(ingredientRepository.save(any(Ingredient.class))).thenAnswer(invocation -> {
             Ingredient ingredient = invocation.getArgument(0);
             return new Ingredient(1L, ingredient.getName(), ingredient.getType(), 
-                    ingredient.getQuantity(), ingredient.getUnit(), ingredient.getCreatedAt());
+                    ingredient.getQuantity(), ingredient.getUnit(), ingredient.getCreatedAt(), ingredient.getPrice());
         });
 
         // When
-        Ingredient result = useCase.execute(name, type, quantity, unit);
+        Ingredient result = useCase.execute(name, type, quantity, unit,price);
 
         // Then
         assertNotNull(result);
@@ -160,16 +163,17 @@ class CreateIngredientUseCaseTest {
         String name = "Sal";
         BigDecimal quantity = new BigDecimal("12.5");
         String unit = "kg";
+        int price = 0;
 
         when(ingredientRepository.findbyName(name)).thenReturn(Optional.empty());
         when(ingredientRepository.save(any(Ingredient.class))).thenAnswer(invocation -> {
             Ingredient ingredient = invocation.getArgument(0);
             return new Ingredient(1L, ingredient.getName(), ingredient.getType(), 
-                    ingredient.getQuantity(), ingredient.getUnit(), ingredient.getCreatedAt());
+                    ingredient.getQuantity(), ingredient.getUnit(), ingredient.getCreatedAt(), ingredient.getPrice());
         });
 
         // When
-        Ingredient result = useCase.execute(name, IngredientType.SECO, quantity, unit);
+        Ingredient result = useCase.execute(name, IngredientType.SECO, quantity, unit,price);
 
         // Then
         assertNotNull(result);
@@ -198,10 +202,10 @@ class CreateIngredientUseCaseTest {
         });
 
         // When - Primeira atualização
-        Ingredient result1 = useCase.execute(name, IngredientType.SECO, firstQuantity, "kg");
+        Ingredient result1 = useCase.execute(name, IngredientType.SECO, firstQuantity, "kg", 0);
         
         // Segunda atualização
-        Ingredient result2 = useCase.execute(name, IngredientType.SECO, secondQuantity, "kg");
+        Ingredient result2 = useCase.execute(name, IngredientType.SECO, secondQuantity, "kg", 0);
 
         // Then
         assertNotNull(result1);
@@ -222,11 +226,11 @@ class CreateIngredientUseCaseTest {
         when(ingredientRepository.save(any(Ingredient.class))).thenAnswer(invocation -> {
             Ingredient ingredient = invocation.getArgument(0);
             return new Ingredient(1L, ingredient.getName(), ingredient.getType(), 
-                    ingredient.getQuantity(), ingredient.getUnit(), ingredient.getCreatedAt());
+                    ingredient.getQuantity(), ingredient.getUnit(), ingredient.getCreatedAt(), ingredient.getPrice());
         });
 
         // When
-        Ingredient result = useCase.execute(name, IngredientType.SECO, new BigDecimal("50"), "kg");
+        Ingredient result = useCase.execute(name, IngredientType.SECO, new BigDecimal("50"), "kg",0);
         LocalDateTime afterExecution = LocalDateTime.now();
 
         // Then
@@ -235,6 +239,32 @@ class CreateIngredientUseCaseTest {
         assertTrue(result.getCreatedAt().isAfter(beforeExecution.minusSeconds(1)) || 
                    result.getCreatedAt().isEqual(beforeExecution));
         assertTrue(result.getCreatedAt().isBefore(afterExecution.plusSeconds(1)) || 
+                   result.getCreatedAt().isEqual(afterExecution));
+    }
+    @Test
+    @DisplayName("Deve criar ingrediente com preço")
+    void testExecute_ShouldCreateWithPrice() {
+        // Given
+        String name = "Açúcar";
+        LocalDateTime beforeExecution = LocalDateTime.now();
+
+        when(ingredientRepository.findbyName(name)).thenReturn(Optional.empty());
+        when(ingredientRepository.save(any(Ingredient.class))).thenAnswer(invocation -> {
+            Ingredient ingredient = invocation.getArgument(0);
+            return new Ingredient(1L, ingredient.getName(), ingredient.getType(),
+                    ingredient.getQuantity(), ingredient.getUnit(), ingredient.getCreatedAt(), ingredient.getPrice());
+        });
+
+        // When
+        Ingredient result = useCase.execute(name, IngredientType.SECO, new BigDecimal("50"), "kg",0);
+        LocalDateTime afterExecution = LocalDateTime.now();
+
+        // Then
+        assertNotNull(result);
+        assertNotNull(result.getCreatedAt());
+        assertTrue(result.getCreatedAt().isAfter(beforeExecution.minusSeconds(1)) ||
+                   result.getCreatedAt().isEqual(beforeExecution));
+        assertTrue(result.getCreatedAt().isBefore(afterExecution.plusSeconds(1)) ||
                    result.getCreatedAt().isEqual(afterExecution));
     }
 }

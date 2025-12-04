@@ -39,11 +39,11 @@ class ListIngredientsUseCaseTest {
     void setUp() {
         LocalDateTime now = LocalDateTime.now();
         ingredient1 = new Ingredient(1L, "Farinha", IngredientType.SECO, 
-                new BigDecimal("100"), "kg", now);
+                new BigDecimal("100"), "kg", now, 0);
         ingredient2 = new Ingredient(2L, "Açúcar", IngredientType.SECO, 
-                new BigDecimal("50"), "kg", now);
+                new BigDecimal("50"), "kg", now, 0);
         ingredient3 = new Ingredient(3L, "Óleo", IngredientType.LIQUIDO, 
-                new BigDecimal("200"), "L", now);
+                new BigDecimal("200"), "L", now,0);
     }
 
     @Test
@@ -103,7 +103,7 @@ class ListIngredientsUseCaseTest {
     void testExecute_ShouldReturnIngredientsOfDifferentTypes() {
         // Given
         Ingredient refrigerado = new Ingredient(4L, "Leite", IngredientType.REFRIGERADO, 
-                new BigDecimal("150"), "kg", LocalDateTime.now());
+                new BigDecimal("150"), "kg", LocalDateTime.now(),0);
         List<Ingredient> expectedIngredients = Arrays.asList(ingredient1, ingredient3, refrigerado);
         when(ingredientRepository.findAll()).thenReturn(expectedIngredients);
 

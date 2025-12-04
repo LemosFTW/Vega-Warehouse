@@ -20,7 +20,7 @@ class IngredientTest {
     void setUp() {
         testDateTime = LocalDateTime.of(2024, 1, 15, 10, 30, 0);
         ingredient = new Ingredient(1L, "Farinha", IngredientType.SECO, 
-                new BigDecimal("100"), "kg", testDateTime);
+                new BigDecimal("100"), "kg", testDateTime,0);
     }
 
     @Test
@@ -28,7 +28,7 @@ class IngredientTest {
     void testIngredientConstructor_WithAllFields() {
         // When
         Ingredient i = new Ingredient(1L, "Farinha", IngredientType.SECO, 
-                new BigDecimal("100"), "kg", testDateTime);
+                new BigDecimal("100"), "kg", testDateTime,0);
 
         // Then
         assertEquals(1L, i.getId());
@@ -44,7 +44,7 @@ class IngredientTest {
     void testIngredientConstructor_WithoutId() {
         // When
         Ingredient i = new Ingredient("Açúcar", IngredientType.SECO, 
-                new BigDecimal("50"), "kg", testDateTime);
+                new BigDecimal("50"), "kg", testDateTime,0);
 
         // Then
         assertNull(i.getId());
@@ -124,7 +124,7 @@ class IngredientTest {
     void testIngredient_WithLiquidoType() {
         // When
         Ingredient i = new Ingredient(1L, "Óleo", IngredientType.LIQUIDO, 
-                new BigDecimal("200"), "L", testDateTime);
+                new BigDecimal("200"), "L", testDateTime,0);
 
         // Then
         assertEquals(IngredientType.LIQUIDO, i.getType());
@@ -137,7 +137,7 @@ class IngredientTest {
     void testIngredient_WithRefrigeradoType() {
         // When
         Ingredient i = new Ingredient(1L, "Leite", IngredientType.REFRIGERADO, 
-                new BigDecimal("150"), "kg", testDateTime);
+                new BigDecimal("150"), "kg", testDateTime,0);
 
         // Then
         assertEquals(IngredientType.REFRIGERADO, i.getType());
@@ -149,7 +149,7 @@ class IngredientTest {
     void testIngredient_WithDecimalQuantity() {
         // When
         Ingredient i = new Ingredient(1L, "Sal", IngredientType.SECO, 
-                new BigDecimal("12.5"), "kg", testDateTime);
+                new BigDecimal("12.5"), "kg", testDateTime,0);
 
         // Then
         assertEquals(new BigDecimal("12.5"), i.getQuantity());
@@ -160,7 +160,7 @@ class IngredientTest {
     void testIngredient_WithZeroQuantity() {
         // When
         Ingredient i = new Ingredient(1L, "Farinha", IngredientType.SECO, 
-                BigDecimal.ZERO, "kg", testDateTime);
+                BigDecimal.ZERO, "kg", testDateTime,0);
 
         // Then
         assertEquals(BigDecimal.ZERO, i.getQuantity());
@@ -171,11 +171,11 @@ class IngredientTest {
     void testIngredient_WithDifferentUnits() {
         // When
         Ingredient kg = new Ingredient(1L, "Farinha", IngredientType.SECO, 
-                new BigDecimal("100"), "kg", testDateTime);
+                new BigDecimal("100"), "kg", testDateTime,0);
         Ingredient l = new Ingredient(2L, "Óleo", IngredientType.LIQUIDO, 
-                new BigDecimal("200"), "L", testDateTime);
+                new BigDecimal("200"), "L", testDateTime,0);
         Ingredient g = new Ingredient(3L, "Sal", IngredientType.SECO, 
-                new BigDecimal("500"), "g", testDateTime);
+                new BigDecimal("500"), "g", testDateTime,0);
 
         // Then
         assertEquals("kg", kg.getUnit());
@@ -211,9 +211,9 @@ class IngredientTest {
     void testIngredient_EqualityByFields() {
         // Given
         Ingredient i1 = new Ingredient(1L, "Farinha", IngredientType.SECO, 
-                new BigDecimal("100"), "kg", testDateTime);
+                new BigDecimal("100"), "kg", testDateTime,0);
         Ingredient i2 = new Ingredient(2L, "Farinha", IngredientType.SECO, 
-                new BigDecimal("100"), "kg", testDateTime);
+                new BigDecimal("100"), "kg", testDateTime,0);
 
         // When & Then
         assertNotEquals(i1.getId(), i2.getId());
@@ -221,5 +221,39 @@ class IngredientTest {
         assertEquals(i1.getType(), i2.getType());
         assertEquals(i1.getQuantity(), i2.getQuantity());
     }
+
+    @Test
+    @DisplayName("Deve criar ingredientes com preços diferentes")
+    void testIngredient_DiferentPrices() {
+        //Given
+        Ingredient i1 = new Ingredient(1L, "Farinha", IngredientType.SECO,
+                new BigDecimal("100"), "kg", testDateTime,100);
+        Ingredient i2 = new Ingredient(2L, "Farinha", IngredientType.SECO,
+                new BigDecimal("100"), "kg", testDateTime,150);
+
+        //When & Then
+        assertNotEquals(i1.getId(), i2.getId());
+        assertNotEquals(i1.getPrice(), i2.getPrice());
+    }
+
+    @Test
+    @DisplayName("Deve criar ingredientes com os preços e verificar o valor")
+    void testIngredient_CheckPrice() {
+        //Given
+        int price = 150;
+
+        Ingredient i1 = new Ingredient(1L, "Farinha", IngredientType.SECO,
+                new BigDecimal("100"), "kg", testDateTime,price);
+
+
+        //When & Then
+        assertEquals(price, i1.getPrice());
+
+        i1.setPrice(price+price);
+
+        assertNotEquals(price, i1.getPrice());
+        assertEquals(price+price, i1.getPrice());
+    }
+
 }
 
