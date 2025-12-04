@@ -7,6 +7,7 @@ import com.vega.warehouse.infrastructure.persistence.entity.CompartmentEntity;
 import com.vega.warehouse.infrastructure.persistence.mapper.CompartmentEntityMapper;
 import com.vega.warehouse.infrastructure.persistence.springdata.CompartmentSpringDataRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,6 +22,7 @@ public class CompartmentRepositoryAdapter implements CompartmentRepositoryPort {
         this.springDataRepository = springDataRepository;
     }
 
+    @Transactional
     @Override
     public Compartment save(Compartment compartment) {
         CompartmentEntity entity = CompartmentEntityMapper.toEntity(compartment);
@@ -60,10 +62,6 @@ public class CompartmentRepositoryAdapter implements CompartmentRepositoryPort {
                 .toList();
     }
 
-    /**
-     * @param type
-     * @return
-     */
     @Override
     public List<Compartment> findAvailableForSaleByType(IngredientType type) {
         return springDataRepository

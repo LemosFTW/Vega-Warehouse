@@ -7,6 +7,7 @@ import com.vega.warehouse.infrastructure.persistence.entity.IngredientEntity;
 import com.vega.warehouse.infrastructure.persistence.mapper.IngredientEntityMapper;
 import com.vega.warehouse.infrastructure.persistence.springdata.IngredientSpringDataRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,6 +31,7 @@ public class IngredientRepositoryAdapter implements IngredientRepositoryPort {
         this.springDataRepository = springDataRepository;
     }
 
+    @Transactional
     @Override
     public Ingredient save(Ingredient ingredient) {
         IngredientEntity entity = IngredientEntityMapper.toEntity(ingredient);
@@ -51,6 +53,7 @@ public class IngredientRepositoryAdapter implements IngredientRepositoryPort {
                 .toList();
     }
 
+    @Transactional
     @Override
     public Ingredient updateVolume(Ingredient ingredient, BigDecimal newVolume) {
         ingredient.setQuantity(ingredient.getQuantity().add(newVolume));
@@ -63,11 +66,6 @@ public class IngredientRepositoryAdapter implements IngredientRepositoryPort {
                 .map(IngredientEntityMapper::toDomain);
     }
 
-    /**
-     * Retorna o volume total de ingredientes agrupado por tipo.
-     *
-     * @return lista com o volume total de cada tipo de ingrediente
-     */
     @Override
     public List<IngredientVolumeByType> getTotalVolumeByType() {
         return springDataRepository.getTotalVolumeByType()

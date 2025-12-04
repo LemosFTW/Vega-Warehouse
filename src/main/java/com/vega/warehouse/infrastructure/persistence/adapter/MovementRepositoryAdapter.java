@@ -13,6 +13,7 @@ import com.vega.warehouse.infrastructure.persistence.springdata.IngredientSpring
 import com.vega.warehouse.infrastructure.persistence.springdata.MovementSpringDataRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class MovementRepositoryAdapter implements MovementRepositoryPort {
         this.ingredientSpringDataRepository = ingredientSpringDataRepository;
         this.compartmentSpringDataRepository = compartmentSpringDataRepository;
     }
-
+    @Transactional
     @Override
     public Movement save(Movement movement) {
         // Buscar IngredientEntity pelo nome
